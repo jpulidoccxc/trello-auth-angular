@@ -45,12 +45,10 @@ export class RegisterFormComponent {
     if (this.form.valid) {
       this.status = 'loading';
       const { name, email, password } = this.form.getRawValue();
-      this.authService.register(email, password, name).subscribe({
+      this.authService.registerAndLogin(email, password, name).subscribe({
         next: () => {
           this.status = 'success';
-          this.router.navigate(['/login'], {
-            queryParams: { email },
-          });
+          this.router.navigate(['/app/boards']);
         },
         error: () => {
           this.status = 'failed';
@@ -72,9 +70,7 @@ export class RegisterFormComponent {
             this.isAvailable = true;
             this.form.controls.email.setValue(email);
           } else {
-            this.router.navigate(['/login'], {
-              queryParams: { email },
-            });
+            this.status = 'failed';
           }
         },
         error: () => {
