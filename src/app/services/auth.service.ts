@@ -6,6 +6,7 @@ import { ResponseLogin } from '@models/auth.model';
 import { TokenService } from './token.service';
 import { IUser } from '@models/user.model';
 import { BehaviorSubject } from 'rxjs';
+import { checkToken } from '@interceptors/token.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -70,12 +71,9 @@ export class AuthService {
   }
 
   getProfile() {
-    const token = this.tokenService.getToken();
     return this.http
       .get<IUser>(`${this.apiUrl}/api/v1/auth/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        context: checkToken(),
       })
       .pipe(
         tap((user) => {
