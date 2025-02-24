@@ -5,12 +5,14 @@ import { environment } from '@environments/environment';
 import { ResponseLogin } from '@models/auth.model';
 import { TokenService } from './token.service';
 import { IUser } from '@models/user.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   apiUrl = environment.API_URL;
+  user$ = new BehaviorSubject<IUser | null>(null);
 
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
@@ -69,10 +71,16 @@ export class AuthService {
 
   getProfile() {
     const token = this.tokenService.getToken();
-    return this.http.get<IUser>(`${this.apiUrl}/api/v1/auth/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return this.http
+      .get<IUser>(`${this.apiUrl}/api/v1/auth/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .pipe(
+        tap((user) => {
+          this.user$.next(user);
+        })
+      );
   }
 }
