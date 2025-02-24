@@ -7,6 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '@services/auth.service';
 import { Router } from '@angular/router';
+import { IUser } from '@models/user.model';
 
 @Component({
   selector: 'app-navbar',
@@ -21,7 +22,15 @@ export class NavbarComponent {
   isOpenOverlayAvatar = false;
   isOpenOverlayBoards = false;
 
+  user: IUser | null = null;
+
   constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.authService.getProfile().subscribe((user) => {
+      this.user = user;
+    });
+  }
 
   logout() {
     this.authService.logout();
