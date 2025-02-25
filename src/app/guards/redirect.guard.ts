@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 import { TokenService } from '@services/token.service';
 
 export const RedirectGuard: CanActivateFn = () => {
-  const token = inject(TokenService).getToken();
+  const isValidToken = inject(TokenService).isValidToken();
   const router = inject(Router);
 
-  if (token) {
+  if (isValidToken) {
     router.navigate(['/app']);
   }
   return true;
